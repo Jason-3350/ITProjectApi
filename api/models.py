@@ -22,22 +22,22 @@ class User(models.Model):
     password_salt = models.CharField(max_length=50)  # password salt
     course = models.CharField(max_length=32)
     status = models.IntegerField(default=1)  # status:1 normal/2 disable/9 deleted
-    # create_at = models.DateTimeField(auto_now_add=True)  # create time
-    # update_at = models.DateTimeField(auto_now_add=True)  # update time
+    create_at = models.DateTimeField(auto_now_add=True)  # create time
+    update_at = models.DateTimeField(auto_now_add=True)  # update time
 
     # def toDict(self):
     #     return {'id': self.id, 'username': self.username, 'nickname': self.nickname, 'email': self.email, 'birthday': self.birthday.strftime('%Y-%m-%d %H:%M:%S'), 'password_hash': self.password_hash,
     #             'password_salt': self.password_salt, 'course': self.course, 'status': self.status, 'create_at': self.create_at.strftime('%Y-%m-%d %H:%M:%S'),
     #             'update_at': self.update_at.strftime('%Y-%m-%d %H:%M:%S')}
 
-#
+
 # class Avatar(models.Model):
 #     name = models.CharField(max_length=32)
 #     collar = models.CharField(max_length=32)
 #     colour = models.CharField(max_length=32)
 #     mood = models.CharField(max_length=32)
 #     health = models.CharField()
-#
+# #
 #
 #
 # class Calendar(models.Model):
