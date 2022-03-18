@@ -23,7 +23,10 @@ SECRET_KEY = 'django-insecure-^7nk_&(b_&ldwhd890x%l8hcw(x$-ok#jpv(h)4&cm^1i42jm4
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+# 1 本地运行的时候关闭
+# DEBUG = True
 
+# 2 本地运行的时候关闭
 ALLOWED_HOSTS = ['localhost', 'mopupapi.herokuapp.com']
 # ALLOWED_HOSTS = ['*']
 
@@ -117,6 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# 3 本地运行的时候关闭
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
@@ -125,3 +129,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+AUTHENTICATION_BACKENDS = (
+    'api.views.MyCustomBackend',
+)
