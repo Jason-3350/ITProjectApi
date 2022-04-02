@@ -12,10 +12,10 @@ class Goals(models.Model):
     start = models.TimeField(verbose_name='Start Time')
     end = models.TimeField(verbose_name='End Time')
     STATUS_CHOICES = (
-        ('0', 'Undo'),
-        ('1', 'Done'),
+        (0, 'Undo'),
+        (1, 'Done'),
     )
-    status = models.CharField(verbose_name='Status', max_length=1, choices=STATUS_CHOICES)
+    status = models.IntegerField(verbose_name='Status', choices=STATUS_CHOICES, default=0)
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     # 写了返回才能通过list_display显示字段名，否则显示的是一个对象
@@ -45,16 +45,18 @@ class Reward(models.Model):
 
 
 class Order(models.Model):
-    # orederID, It is impossible to add a non-nullable field 'orderID' to order without specifying a default.
-    # This is because the database needs something to populate existing rows.
-    # 设置 blank = True 解决
-    orderID = models.IntegerField(verbose_name='ID', primary_key=True, blank=True)
-    recomID = models.ForeignKey(verbose_name='Recommend', to=Recommendation, on_delete=models.CASCADE, null=True, blank=True)
-    rewardID = models.ForeignKey(verbose_name='Reward', to=Reward, on_delete=models.CASCADE, null=True, blank=True)
+    coin = models.IntegerField(verbose_name='Coin')
+    rewards = models.CharField(verbose_name='Rewards', max_length=20)
+    qr = models.CharField(verbose_name='QRInfo', max_length=200)
+    STATUS_CHOICES = (
+        (0, 'Delete'),
+        (1, 'Show'),
+    )
+    status = models.IntegerField(verbose_name='Status', choices=STATUS_CHOICES, default=1)
     user = models.ForeignKey(verbose_name='User', to=User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '%s-%s-%s' % (self.recomID, self.rewardID, self.user)
+        return '%s-%s-%s-%s' % (self.coin, self.rewards, self.qr, self.user)
 
 
 class Coins(models.Model):
@@ -66,3 +68,35 @@ class Coins(models.Model):
 
     def __str__(self):
         return '%s-%s' % (self.coin, self.user)
+
+
+class UserICal(models.Model):
+    summary = models.CharField(verbose_name='Summary', max_length=30)
+    date = models.DateField(verbose_name='Date', default=timezone.now)
+    start = models.TimeField(verbose_name='Start Time')
+    end = models.TimeField(verbose_name='End Time')
+    location = models.CharField(verbose_name='Location', max_length=30)
+    STATUS_CHOICES = (
+        (0, 'Undo'),
+        (1, 'Done'),
+    )
+    status = models.IntegerField(verbose_name='Status', choices=STATUS_CHOICES, default=0)
+    icsName = models.CharField(verbose_name='ICalendar', max_length=200, blank=True)
+    user = models.ForeignKey(verbose_name='User', to=User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'UserICal'
+
+    def __str__(self):
+        return '%s-%s-%s-%s-%s-%s-%s-%s' % (self.summary, self.date, self.start, self.end, self.location, self.status, self.icsName, self.user)
+
+
+class Notices(models.Model):
+    notice = models.CharField(verbose_name='Notices', max_length=200)
+    user = models.ForeignKey(verbose_name='User', to=User, on_delete=models.CASCADE, default=4)
+
+    class Meta:
+        verbose_name_plural = 'Notices'
+
+    def __str__(self):
+        return '%s-%s' % (self.notice, self.user)
