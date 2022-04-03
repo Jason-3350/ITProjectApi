@@ -362,11 +362,9 @@ class ICalendarURL(APIView):
             for event in cal.walk():
                 if event.name == "VCALENDAR":
                     icsName = str(event.get('X-WR-CALNAME'))
-                    try:
-                        UserICal.objects.filter(icsName=icsName)
+                    userURL = UserICal.objects.filter(icsName=icsName)
+                    if userURL.count() != 0:
                         return Response(status=status.HTTP_226_IM_USED)
-                    except UserICal.DoesNotExist:
-                        continue
                 if event.name == "VEVENT":
                     summary = str(event.get('summary'))
                     startDateTime = event.get('dtstart').dt
@@ -398,11 +396,9 @@ class ICalendarFile(APIView):
             for event in gCal.walk():
                 if event.name == "VCALENDAR":
                     icsFileName = str(event.get('X-WR-CALNAME'))
-                    try:
-                        UserICal.objects.filter(icsName=icsFileName)
+                    userFile = UserICal.objects.filter(icsName=icsFileName)
+                    if userFile.count() != 0:
                         return Response(status=status.HTTP_226_IM_USED)
-                    except UserICal.DoesNotExist:
-                        continue
                 if event.name == "VEVENT":
                     summary = str(event.get('summary'))
                     startDateTime = event.get('dtstart').dt
