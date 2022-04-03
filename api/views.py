@@ -358,10 +358,15 @@ class ICalendarURL(APIView):
             req = urllib.request.urlopen(icsUrl)
             req_data = req.read()
             cal = Calendar.from_ical(req_data)
-            icsFileName = ""
+            icsName = ""
             for event in cal.walk():
                 if event.name == "VCALENDAR":
-                    icsFileName = str(event.get('X-WR-CALNAME'))
+                    icsName = str(event.get('X-WR-CALNAME'))
+                    try:
+                        UserICal.objects.filter(icsName=icsName)
+                        return Response(status=status.HTTP_226_IM_USED)
+                    except UserICal.DoesNotExist:
+                        continue
                 if event.name == "VEVENT":
                     summary = str(event.get('summary'))
                     startDateTime = event.get('dtstart').dt
@@ -370,7 +375,7 @@ class ICalendarURL(APIView):
                     start_time = startDateTime.time()
                     end_time = endDateTime.time()
                     location = str(event.get('location'))
-                    UserICal.objects.create(summary=summary, date=start_date, start=start_time, end=end_time, location=location, icsName=icsFileName, user=user)
+                    UserICal.objects.create(summary=summary, date=start_date, start=start_time, end=end_time, location=location, icsName=icsName, user=user)
             return Response(status=status.HTTP_201_CREATED)
         except Exception as err:
             print(err)
@@ -389,10 +394,15 @@ class ICalendarFile(APIView):
             # 获取用户名加到文件名后面
             user = User.objects.get(id=user_id)
             gCal = Calendar.from_ical(up_file)
-            icsName = ""
+            icsFileName = ""
             for event in gCal.walk():
                 if event.name == "VCALENDAR":
-                    icsName = str(event.get('X-WR-CALNAME'))
+                    icsFileName = str(event.get('X-WR-CALNAME'))
+                    try:
+                        UserICal.objects.filter(icsName=icsFileName)
+                        return Response(status=status.HTTP_226_IM_USED)
+                    except UserICal.DoesNotExist:
+                        continue
                 if event.name == "VEVENT":
                     summary = str(event.get('summary'))
                     startDateTime = event.get('dtstart').dt
@@ -401,7 +411,7 @@ class ICalendarFile(APIView):
                     start_time = startDateTime.time()
                     end_time = endDateTime.time()
                     location = str(event.get('location'))
-                    UserICal.objects.create(summary=summary, date=start_date, start=start_time, end=end_time, location=location, icsName=icsName, user=user)
+                    UserICal.objects.create(summary=summary, date=start_date, start=start_time, end=end_time, location=location, icsName=icsFileName, user=user)
             return Response(status=status.HTTP_201_CREATED)
         except Exception as err:
             print(err)
