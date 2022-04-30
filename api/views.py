@@ -45,34 +45,13 @@ class UserRegister(APIView):
                 # 把用户名，密码，邮箱存到数据库
                 password = data['password']
                 User.objects.create_user(username=username, email=userEmail, password=password)
+                newUser = User.objects.get(username=username)
+                Coins.objects.create(coin=0, user=newUser)
                 return Response(status=status.HTTP_201_CREATED)
             except Exception as e:
                 print(e)
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
-
-# class UserLogin(APIView):
-#
-#     def post(self, request):
-#         '''用户登录'''
-#         try:
-#             # 获取前端传入的请求json数据并转换成字典{'username':xxx, 'password':xxx}
-#             data = request.data
-#             # 获取前端出来的用户名和密码
-#             username = data['username']
-#             password = data['password']
-#             # 根据用户名验证登录者信息
-#             user = authenticate(request, username=username, password=password)
-#             if user:
-#                 serializer = UserSerializer(instance=user)
-#                 # return Response({'result': True, 'msg': 'Login Successfully'})
-#                 return Response(serializer.data, status=status.HTTP_200_OK)
-#             else:
-#                 # 当前登录失败
-#                 return Response({'result': False, 'msg': 'Incorrect username or password !'})
-#         except Exception as err:
-#             print(err)
-#             return Response(status=status.HTTP_404_NOT_FOUND)
 
 class UserInfo(APIView):
     permission_classes = [IsAuthenticated, ]
